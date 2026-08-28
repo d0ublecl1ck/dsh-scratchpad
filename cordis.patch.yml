@@ -1,0 +1,19 @@
+# dsh-scratchpad bundle patch: inserts the workspace-free chat plugin over a
+# profile root. The host half needs the harness's workspace registry
+# (`@deepseek-ai/dsh-workspace`, provided by the web profile's base bundles),
+# the web server and commands registries, and the fs/agent/session services —
+# all shipped in the web profile's base/web-app bundles, so no extra
+# composition rows are required.
+#
+# The row replaces the targeted row's whole config, so it restates every key
+# the plugin owns. Paths default to ${DSH_HOME:-~/.dsh}/scratchpad and
+# ${DSH_HOME:-~/.dsh}/projects; set them here only to override. The client
+# half needs no config (its surfaces read host routes).
+- insert:
+    - id: scratchpad
+      name: 'dsh-scratchpad'
+      config:
+        scratchpadPath: ''
+        projectsPath: ''
+        autoPromote: true
+        slugMaxLen: 8

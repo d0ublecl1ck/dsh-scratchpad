@@ -1,0 +1,47 @@
+{
+  "name": "dsh-scratchpad",
+  "version": "0.1.0",
+  "description": "Workspace-free free chat for DeepSeek Harness — a sidebar entry that opens a shared scratchpad workspace (~/.dsh/scratchpad), keeps every tool available, and auto-promotes sessions that produce real files into isolated sibling workspaces (~/.dsh/projects/<date>-<slug>) with a new-session handoff",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./config": "./src/config.js",
+    "./paths": "./src/paths.js",
+    "./fileset": "./src/fileset.js",
+    "./promote": "./src/promote.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib/client.js",
+    "test",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "scratchpad",
+    "free-chat",
+    "workspace"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "zod": "^4.4.3"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [],
+      "immediately": false
+    }
+  }
+}
