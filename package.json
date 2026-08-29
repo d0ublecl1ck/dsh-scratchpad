@@ -13,6 +13,13 @@
     "./client": "./lib/client.js",
     "./package.json": "./package.json"
   },
+  "scripts": {
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1264459640/dsh-scratchpad.git"
+  },
   "files": [
     "src",
     "lib/client.js",
