@@ -51,7 +51,7 @@ The scratchpad session stays put; originals remain in the shared scratchpad
 
 ```bash
 # from the npm registry
-dsh plugin --profile web add -w dsh-scratchpad
+dsh plugin --profile web add -w @banana-peeljj12/dsh-scratchpad
 
 # from a packed tarball / source checkout (development)
 dsh plugin --profile web add -w link:/abs/path/to/dsh-scratchpad
@@ -68,7 +68,7 @@ In the web profile's `cordis.patch.yml` (or by merging this package's
 ```yaml
 - insert:
     - id: scratchpad
-      name: 'dsh-scratchpad'
+      name: '@banana-peeljj12/dsh-scratchpad'
       config:
         scratchpadPath: ''   # default ${DSH_HOME:-~/.dsh}/scratchpad
         projectsPath: ''     # default ${DSH_HOME:-~/.dsh}/projects
@@ -135,7 +135,7 @@ Manual UI checklist:
 
 ## Rollback / uninstall
 
-Remove the plugin row (or `dsh plugin --profile web remove dsh-scratchpad`)
+Remove the plugin row (or `dsh plugin --profile web remove @banana-peeljj12/dsh-scratchpad`)
 and restart. All host registrations (routes, commands, listeners) are fiber
 effects and disappear; the registered workspaces stay usable as ordinary
 workspaces, and no physical files are deleted.
