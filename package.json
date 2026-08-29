@@ -1,6 +1,6 @@
 {
   "name": "dsh-scratchpad",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Workspace-free free chat for DeepSeek Harness — a sidebar entry that opens a shared scratchpad workspace (~/.dsh/scratchpad), keeps every tool available, and auto-promotes sessions that produce real files into isolated sibling workspaces (~/.dsh/projects/<date>-<slug>) with a new-session handoff",
   "type": "module",
   "main": "src/index.js",
