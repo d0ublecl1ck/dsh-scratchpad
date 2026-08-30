@@ -36,7 +36,7 @@ session to another workspace. Promotion therefore:
 4. the client banner hands off to a **new session** in that workspace.
 
 The scratchpad session stays put; originals remain in the shared scratchpad
-(copy semantics) and can be cleaned with `/scratchpad tidy`.
+(copy semantics) and can be cleaned with `/scratchpad-tidy`.
 
 ## Requirements
 
@@ -115,7 +115,7 @@ Manual UI checklist:
 3. Click it → a new session opens bound to `projects/<date>-<slug>`; the
    artifact is under `artifacts/`.
 4. `/scratchpad` shows the paths, workspace id and promotion count;
-   `/scratchpad tidy` (then `--apply`) removes originals that no other live
+   `/scratchpad-tidy` (then `--apply`) removes originals that no other live
    scratchpad session still references.
 
 ## Design notes
@@ -128,7 +128,7 @@ Manual UI checklist:
   light/dark follows the shell for free (`color-scheme`).
 - **Copy, never move** — the scratchpad is shared across sessions; moving
   files would break other live sessions' tool paths. Originals stay until a
-  user-confirmed `/scratchpad tidy --apply`.
+  user-confirmed `/scratchpad-tidy --apply`.
 - **Rollback-safe promotion** — staging temp dir + rename publishes the
   project only when complete; registry-create failure rolls the claimed dir
   back; a new workspace is never registered pointing at a half-copied dir.

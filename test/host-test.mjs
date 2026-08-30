@@ -68,7 +68,12 @@ apply(ctx, config);
 assert.equal(routes.length, 1);
 assert.equal(routes[0].kind, "prefix");
 assert.equal(routes[0].path, "/scratchpad");
-assert.equal(commands.length, 2, "/scratchpad + /scratchpad tidy");
+assert.equal(commands.length, 2, "/scratchpad + /scratchpad-tidy");
+assert.deepEqual(
+  commands.map((c) => c.name),
+  ["scratchpad", "scratchpad-tidy"],
+  "command names must match DSH's /^[a-z][a-z0-9_-]*$/u (spaces crash the plugin tree)",
+);
 assert.ok(listeners["fs/observed"], "fs/observed listener registered");
 assert.ok(listeners["agent/turn-stopping"], "turn-stopping listener registered");
 

@@ -8,7 +8,7 @@
  *   - Serves `/scratchpad/open` (mkdir + idempotent register → workspaceId,
  *     for the client sidebar button) and `/scratchpad/promotions` (the
  *     promotion records, for the client banner).
- *   - Registers `/scratchpad` and `/scratchpad tidy` commands.
+ *   - Registers `/scratchpad` and `/scratchpad-tidy` commands.
  *   - Detects artifacts with two layers: the `fs/observed`/`fs/write-intent`
  *     event layer (exact absolute paths, attributed via `exec.agent`'s
  *     session) and a per-turn scan layer (recursive scratchpad diff) that
@@ -348,7 +348,7 @@ export function apply(ctx, rawConfig = {}) {
   }), "dsh-scratchpad: /scratchpad command");
 
   ctx.effect(() => ctx.commands.register({
-    name: "scratchpad tidy",
+    name: "scratchpad-tidy",
     description: "list-or-remove promoted artifact originals still left in the shared scratchpad (never removes files another live scratchpad session still references)",
     handler: async ({ args }) => {
       const applyClean = String(args?.[0] ?? "") === "--apply";
@@ -389,16 +389,16 @@ export function apply(ctx, rawConfig = {}) {
         await walkArtifacts(artifactsDir);
       }
       if (!applyClean) {
-        if (removable.length === 0) return { kind: "success", text: "scratchpad tidy: nothing to clean (run with --apply to remove)" };
+        if (removable.length === 0) return { kind: "success", text: "scratchpad-tidy: nothing to clean (run with --apply to remove)" };
         return {
           kind: "success",
-          text: `scratchpad tidy: ${removable.length} original(s) can be removed (run again with --apply):\n${removable.join("\n")}`,
+          text: `scratchpad-tidy: ${removable.length} original(s) can be removed (run again with --apply):\n${removable.join("\n")}`,
         };
       }
       for (const file of removable) {
         try { await fs.rm(file, { force: true }); } catch { /* keep going */ }
       }
-      return { kind: "success", text: `scratchpad tidy: removed ${removable.length} original(s) from ${canonicalScratchpad}` };
+      return { kind: "success", text: `scratchpad-tidy: removed ${removable.length} original(s) from ${canonicalScratchpad}` };
     },
-  }), "dsh-scratchpad: /scratchpad tidy command");
+  }), "dsh-scratchpad: /scratchpad-tidy command");
 }
