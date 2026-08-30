@@ -10,7 +10,7 @@ with a new-session handoff.
 
 | Capability | How |
 |---|---|
-| **One-click free chat** | `sidebar.footer.action` button 「自由对话」→ `GET /scratchpad/open` → `workspaces.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
+| **One-click free chat** | An independent sidebar section 「自由对话」 — a titled block between the new-session button and the workspaces list (56px rail collapse: a single sparkle icon button) → `GET /scratchpad/open` → `workspaces.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
 | **Shared default directory** | All free chats share `${DSH_HOME:-~/.dsh}/scratchpad/` (mkdir + `workspaceRegistry.create` at startup, idempotent). |
 | **Fully open tools (no stripping)** | The plugin never restricts tools — bash, write/edit, web search etc. all work; safety stays with DSH's own sandbox + approval. |
 | **Isolated artifact promotion** | When a session produces files, its file-set is **copied** (never moved — the scratchpad is shared) into `${DSH_HOME:-~/.dsh}/projects/<date>-<slug>` — a **sibling** of the scratchpad, never a child — registered as a new workspace, and a banner offers **「在新工作区打开」** (`workspaces.startSession(projectWorkspaceId)`) so you continue in a fresh session bound to the project. |
@@ -57,8 +57,9 @@ dsh plugin --profile web add -w @banana-peeljj12/dsh-scratchpad
 dsh plugin --profile web add -w link:/abs/path/to/dsh-scratchpad
 ```
 
-Then restart `dsh web`. The sidebar's 「自由对话」 button appears next to the
-settings entry.
+Then restart `dsh web`. An independent 「自由对话」 section appears between the
+new-session button and the workspace list; collapse the sidebar to get a single
+icon button between the new-session and workspace icons.
 
 ## Configuration
 
@@ -91,6 +92,7 @@ node test/config-test.mjs     # ~/DSH_HOME expansion, isolation guard
 node test/fileset-test.mjs    # shared-scratchpad attribution, double-claim prevention
 node test/promote-test.mjs    # copy atomicity + structure, collision, rollback, mkdir-then-create
 node test/host-test.mjs       # mounted host half over stubbed services
+node test/injection-test.mjs  # client-side injection locator chain + degrade criteria (mock DOM)
 ```
 
 The client half is a hand-written, zero-build browser bundle
@@ -101,6 +103,7 @@ no build step.
 ## Verify
 
 ```bash
+node test/injection-test.mjs
 node test/paths-test.mjs && node test/config-test.mjs && node test/fileset-test.mjs && node test/promote-test.mjs && node test/host-test.mjs
 dsh web --dump-config | grep scratchpad    # row composed into the profile
 curl 'http://127.0.0.1:3080/scratchpad/open'        # { "workspaceId": "…" } — idempotent twice
@@ -109,21 +112,43 @@ curl 'http://127.0.0.1:3080/scratchpad/promotions'  # { "promotions": […] }
 
 Manual UI checklist:
 
-1. Sidebar 「自由对话」 → a blank session in the scratchpad workspace opens.
-2. Ask the agent to write a file (or run bash that creates one) → after the
+1. Wide sidebar: an independent 「自由对话」 section (title + 「开始自由对话」)
+   shows between the new-session button and the workspaces list; the bottom
+   「自由对话」 footer button is gone.
+2. Click 「开始自由对话」 → a blank session in the scratchpad workspace opens.
+3. Collapse the sidebar (56px rail): the section collapses to a single icon
+   button between the new-session and workspace icons, visually distinct from
+   the new-session icon; clicking it behaves the same.
+4. Light/dark theme switch → the section follows the theme.
+5. Ask the agent to write a file (or run bash that creates one) → after the
    turn a banner appears: 产物已提升到独立工作区 … + 「在新工作区打开」.
-3. Click it → a new session opens bound to `projects/<date>-<slug>`; the
+6. Click it → a new session opens bound to `projects/<date>-<slug>`; the
    artifact is under `artifacts/`.
-4. `/scratchpad` shows the paths, workspace id and promotion count;
+7. `/scratchpad` shows the paths, workspace id and promotion count;
    `/scratchpad-tidy` (then `--apply`) removes originals that no other live
    scratchpad session still references.
+8. Reload or remove the plugin → the injected section DOM is removed with no
+   residue in the sidebar; after a reload the section comes back.
 
 ## Design notes
 
+- **Independent section via anchor + portal (reviewed DOM injection)** — the
+  slot system has no sidebar-section slot, so the client keeps a `display:none`
+  anchor inside its `sidebar.footer.action` registration and resolves the
+  sidebar root + workspaces region through an explicit per-step criteria chain
+  (`closest('[data-slot="sidebar.footer.action"]')` → footerActions → footArea
+  → root; regionArea must be footArea's previous sibling owning the workspaces
+  outlet). It injects a `flex:none` section div in front of the regionArea and
+  renders it with `createPortal` — same React tree, so locales and contexts
+  keep working. Every failed criterion degrades **visibly** to the legacy
+  footer button (warn + fallback render); the injected node carries a data
+  mark for idempotent reuse and an owner token so unmount/HMR cleanup never
+  leaves residue.
 - **Slot-only UI, zero shadowing** — `sidebar.footer.action` and
-  `conversation.input.dock` are additive `list` slots (the former already
-  co-occupied by other plugins); the plugin cannot break core UI and unloads
-  cleanly (every host registration is a fiber effect).
+  `conversation.input.dock` are additive `list` slots; the plugin registers
+  nothing into `sidebar.workspaces`/`sidebar.settings` (both `single`) and so
+  cannot shadow core UI or other plugins; unloads cleanly (every host
+  registration is a fiber effect).
 - **Theme tokens only** — all colors are `--dsw-alias-*` variables;
   light/dark follows the shell for free (`color-scheme`).
 - **Copy, never move** — the scratchpad is shared across sessions; moving
