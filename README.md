@@ -10,7 +10,7 @@ with a new-session handoff.
 
 | Capability | How |
 |---|---|
-| **One-click free chat** | An independent sidebar section 「自由对话」 — a titled block between the new-session button and the workspaces list (56px rail collapse: a single sparkle icon button) → `GET /scratchpad/open` → `uiWorkspace.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
+| **One-click free chat** | A 「自由对话」 button paired with the shell new-session button — two 50% controls in one row (56px rail collapse: a single sparkle icon button; if the shell button cannot be located, the entry falls back to a full-width section above the workspaces list) → `GET /scratchpad/open` → `uiWorkspace.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
 | **Shared default directory** | All free chats share `${DSH_HOME:-~/.dsh}/scratchpad/` (mkdir + `workspaceRegistry.create` at startup, idempotent). |
 | **Fully open tools (no stripping)** | The plugin never restricts tools — bash, write/edit, web search etc. all work; safety stays with DSH's own sandbox + approval. |
 | **Isolated artifact promotion** | When a session produces files, its file-set is **copied** (never moved — the scratchpad is shared) into `${DSH_HOME:-~/.dsh}/projects/<date>-<slug>` — a **sibling** of the scratchpad, never a child — registered as a new workspace, and a banner offers **「在新工作区打开」** (`uiWorkspace.startSession(projectWorkspaceId)`) so you continue in a fresh session bound to the project. |
