@@ -10,10 +10,10 @@ with a new-session handoff.
 
 | Capability | How |
 |---|---|
-| **One-click free chat** | An independent sidebar section 「自由对话」 — a titled block between the new-session button and the workspaces list (56px rail collapse: a single sparkle icon button) → `GET /scratchpad/open` → `workspaces.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
+| **One-click free chat** | An independent sidebar section 「自由对话」 — a titled block between the new-session button and the workspaces list (56px rail collapse: a single sparkle icon button) → `GET /scratchpad/open` → `uiWorkspace.startSession(workspaceId)` opens a blank session bound to the shared scratchpad. |
 | **Shared default directory** | All free chats share `${DSH_HOME:-~/.dsh}/scratchpad/` (mkdir + `workspaceRegistry.create` at startup, idempotent). |
 | **Fully open tools (no stripping)** | The plugin never restricts tools — bash, write/edit, web search etc. all work; safety stays with DSH's own sandbox + approval. |
-| **Isolated artifact promotion** | When a session produces files, its file-set is **copied** (never moved — the scratchpad is shared) into `${DSH_HOME:-~/.dsh}/projects/<date>-<slug>` — a **sibling** of the scratchpad, never a child — registered as a new workspace, and a banner offers **「在新工作区打开」** (`workspaces.startSession(projectWorkspaceId)`) so you continue in a fresh session bound to the project. |
+| **Isolated artifact promotion** | When a session produces files, its file-set is **copied** (never moved — the scratchpad is shared) into `${DSH_HOME:-~/.dsh}/projects/<date>-<slug>` — a **sibling** of the scratchpad, never a child — registered as a new workspace, and a banner offers **「在新工作区打开」** (`uiWorkspace.startSession(projectWorkspaceId)`) so you continue in a fresh session bound to the project. |
 | **Detection** | Two layers: `fs/observed` + `fs/write-intent` events (exact absolute paths, attributed via the acting agent's session) plus a per-turn recursive scratchpad scan that catches files bash/subprocess created (bash emits no fs events). A single global snapshot prevents two sessions from double-claiming a file. |
 
 ## Why promote → new session (not "redirect")
@@ -46,6 +46,11 @@ The scratchpad session stays put; originals remain in the shared scratchpad
   base/web-app bundles; no extra composition rows needed).
 - Dependency: `zod` and `@deepseek-ai/schemastery` (declared in
   `package.json`).
+- The client half resolves "start a session in this workspace" from
+  `uiWorkspace.startSession` and falls back to `workspaces.startSession` for
+  harnesses that still expose the capability on the workspaces controller.
+  When neither exists the click reports the missing capability instead of
+  silently doing nothing.
 
 ## Install
 

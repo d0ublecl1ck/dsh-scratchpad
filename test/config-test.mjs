@@ -30,8 +30,11 @@ try {
   else process.env.DSH_HOME = oldHome;
 }
 
-// defaults derive from DSH home and are siblings
-const home = path.join(os.homedir(), ".dsh");
+// Defaults derive from the RESOLVED DSH home and are siblings. `dshHome()`
+// is the single source of truth here on purpose: hardcoding ~/.dsh made this
+// test fail for anyone running it from inside a harness, where DSH_HOME is
+// ambient.
+const home = dshHome();
 assert.equal(defaultScratchpadPath(), path.join(home, "scratchpad"));
 assert.equal(defaultProjectsPath(), path.join(home, "projects"));
 
