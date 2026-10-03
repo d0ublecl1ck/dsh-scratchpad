@@ -131,4 +131,24 @@ function stubFetch(workspaceId) {
 	assert.equal(optionalService({}, "uiWorkspace"), undefined, "a context without get() degrades to undefined");
 }
 
-console.log("open-session-test: starter resolution, optional lookup, fallback, loud failure and payload guard all passed");
+// --- 9. icon resolution across harness versions --------------------------------
+// The primitives package renamed IconXxx16 → IconXxx<Weight><Size>
+// (IconSparkleMedium / IconSparkleRegular). The entry used to reference the old
+// names directly, so a rename made every JSX element type `undefined` and React
+// error #130 crashed the whole sidebar slot — the entry vanished. Resolution
+// must never return undefined: fall back to a bundled inline SVG instead.
+{
+	assert.equal(typeof internal.iconOf, "function", "iconOf exported via _internal");
+	const { iconOf } = internal;
+	const New = () => null;
+	const Legacy = () => null;
+	assert.equal(iconOf({ IconSparkleMedium: New, IconSparkle16: Legacy }, "sparkle"), New, "current naming wins when both exist");
+	assert.equal(iconOf({ IconSparkle16: Legacy }, "sparkle"), Legacy, "legacy naming still resolves");
+	for (const name of ["newChat", "sparkle", "folderOpen", "close"]) {
+		assert.equal(typeof iconOf({}, name), "function", name + " falls back to a component, never undefined");
+		assert.equal(typeof iconOf(undefined, name), "function", name + " resolves without a primitives module");
+	}
+	assert.equal(typeof iconOf({}, "not-a-real-icon"), "function", "an unknown icon name still yields a component");
+}
+
+console.log("open-session-test: starter, optional lookup, icons, fallback, loud failure and payload guard all passed");
