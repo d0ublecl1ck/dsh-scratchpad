@@ -11,7 +11,12 @@ import os from "node:os";
 import path from "node:path";
 import { apply } from "../src/index.js";
 
-const root = await fs.mkdtemp(path.join(os.tmpdir(), "sp-host-"));
+// Canonicalize the temp root before use: `os.tmpdir()` is a symlinked path on
+// macOS (/var → /private/var), while the plugin realpaths its configured roots
+// at startup. A raw tmpdir would make every session cwd look outside the
+// scratchpad and silently disable detection, failing the test for a reason
+// that has nothing to do with the plugin.
+const root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), "sp-host-")));
 const scratchpad = path.join(root, "scratchpad");
 const projects = path.join(root, "projects");
 
