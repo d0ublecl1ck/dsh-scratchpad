@@ -1,0 +1,9 @@
+# FREAK
+
+Review clues for the next closeout. Not a changelog — only things worth
+checking before the next release or upgrade.
+
+- [ ] `lib/client.js` — `resolveSessionStarter` / `optionalService` encode a harness-version capability split: `uiWorkspace.startSession` (current DSH) vs `workspaces.startSession` (legacy), read through `ctx.get` because this cordis build has no optional `inject`. Re-check after every DSH upgrade: which service owns `startSession`, and whether `ctx.get` still resolves a service without an `inject` declaration. Recorded: 2026-10-03
+- [ ] `test/open-session-test.mjs` — the client bundle is evaluated under Node with a hand-rolled `require` stub. Adding a `require(...)` to `lib/client.js` without extending that stub makes the file throw before any assertion runs. Recorded: 2026-10-03
+- [ ] `README.md` — the capability table (「One-click free chat」, 「Isolated artifact promotion」) and the Requirements bullet describe client-side behaviour; keep them in sync with the resolution order and the degrade path in `lib/client.js`. Recorded: 2026-10-03
+- [ ] Verification gap — this plugin activates only on a web profile (`workspaceRegistry` + `webServer`). The generic activation gate fails on a base profile by design; verify against a real web profile instead of trusting the composed config. Recorded: 2026-10-03
