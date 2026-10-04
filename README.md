@@ -2,7 +2,7 @@
 
 ![MIT](https://img.shields.io/badge/license-MIT-blue) ![profile](https://img.shields.io/badge/DSH-web%20profile-informational) ![tests](https://img.shields.io/badge/npm%20test-7%2F7-brightgreen)
 
-![The 自由对话 button beside the shell new-session button](docs/paired-entry.png)
+![The 自由对话 button beside the shell new-session button](https://raw.githubusercontent.com/d0ublecl1ck/dsh-scratchpad-plus/main/docs/paired-entry.png)
 
 **Workspace-free free chat for DeepSeek Harness.** Start a conversation without
 picking a project directory: a button beside the sidebar's new-session button
