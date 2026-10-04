@@ -2,6 +2,7 @@
 
 Review clues for the next closeout. Not a changelog — only things worth
 checking before the next release or upgrade.
+- [ ] Fork identity — this repo is `d0ublecl1ck/dsh-scratchpad-plus` (package `dsh-scratchpad-plus`, version line continues upstream 0.3.0 as 0.4.0); upstream is `1264459640/dsh-scratchpad`. Our line is `main`, upstream's is `master`. When syncing, merge upstream into a throwaway branch first: the pairing layout and the rename both touch the same regions. The loader row id stays `scratchpad` and the slot entry id stays `dsh-scratchpad` on purpose — changing them would mount a second entry during an in-place upgrade. Recorded: 2026-10-04
 
 - [ ] `lib/client.js` — `resolveSessionStarter` / `optionalService` encode a harness-version capability split: `uiWorkspace.startSession` (current DSH) vs `workspaces.startSession` (legacy), read through `ctx.get` because this cordis build has no optional `inject`. Re-check after every DSH upgrade: which service owns `startSession`, and whether `ctx.get` still resolves a service without an `inject` declaration. Recorded: 2026-10-03
 - [ ] `lib/client.js` — `iconOf` / `ICON_CANDIDATES` patch over a primitives rename (`IconXxx16` → `IconXxx<Weight><Size>`). Re-check after every DSH upgrade: whether the primitives package added/renamed icons again, and whether the four fallback glyphs are still needed. A miss here is invisible except as a vanished slot entry (React #130), so check the sidebar in a real render, not just the composed config. Recorded: 2026-10-03

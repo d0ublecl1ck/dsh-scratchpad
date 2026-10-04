@@ -1,7 +1,7 @@
 {
-  "name": "@banana-peeljj12/dsh-scratchpad",
-  "version": "0.3.0",
-  "description": "Workspace-free free chat for DeepSeek Harness — a sidebar entry that opens a shared scratchpad workspace (~/.dsh/scratchpad), keeps every tool available, and auto-promotes sessions that produce real files into isolated sibling workspaces (~/.dsh/projects/<date>-<slug>) with a new-session handoff",
+  "name": "dsh-scratchpad-plus",
+  "version": "0.4.0",
+  "description": "Workspace-free free chat for DeepSeek Harness — a sidebar entry that opens a shared scratchpad workspace (~/.dsh/scratchpad), keeps every tool available, and auto-promotes sessions that produce real files into isolated sibling workspaces (~/.dsh/projects/<date>-<slug>) with a new-session handoff. Maintained fork of dsh-scratchpad.",
   "type": "module",
   "main": "src/index.js",
   "exports": {
@@ -18,12 +18,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1264459640/dsh-scratchpad.git"
+    "url": "git+https://github.com/d0ublecl1ck/dsh-scratchpad-plus.git"
   },
   "files": [
     "src",
     "lib/client.js",
     "test",
+    "docs",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"
