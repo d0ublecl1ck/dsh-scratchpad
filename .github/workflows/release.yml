@@ -64,10 +64,11 @@ jobs:
           echo "PACKED_FILE=$TGZ_NAME" >> "$GITHUB_ENV"
           echo "Created package: $TGZ_NAME"
 
-      - name: Publish to npm
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # This fork does not publish from CI. Upstream's workflow relied on a
+      # repository secret (NPM_TOKEN), and a fork does not inherit secrets; a
+      # hard publish step would fail here and abort the release. Publish by hand
+      # from a logged-in checkout when a release should reach npm:
+      #   npm publish --access public --registry=https://registry.npmjs.org/
 
       - name: Create GitHub Release & Upload Assets
         uses: softprops/action-gh-release@v2
