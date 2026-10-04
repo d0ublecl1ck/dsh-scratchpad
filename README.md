@@ -1,5 +1,9 @@
 # dsh-scratchpad-plus
 
+![MIT](https://img.shields.io/badge/license-MIT-blue) ![profile](https://img.shields.io/badge/DSH-web%20profile-informational) ![tests](https://img.shields.io/badge/npm%20test-7%2F7-brightgreen)
+
+![The 自由对话 button beside the shell new-session button](docs/paired-entry.png)
+
 **Workspace-free free chat for DeepSeek Harness.** Start a conversation without
 picking a project directory: a button beside the sidebar's new-session button
 opens a shared scratchpad workspace, every tool stays available, and sessions
@@ -23,6 +27,16 @@ workspaces with a new-session handoff.
 
 Everything else - the promotion pipeline, the commands, the configuration - is
 upstream's work, unchanged.
+
+## When you need it
+
+- You want to try a prompt or prototype a script without deciding which project
+directory it belongs to, and without littering the sidebar with one-off folders.
+- You are mid-conversation and the agent needs to write a real file - you do not
+want that file to land in a production checkout. Free chats live in a shared
+scratchpad; anything worth keeping is promoted into its own workspace.
+- You keep several throwaway conversations open at once and want them in one
+place instead of mixed into your project list.
 
 ## What it does
 
@@ -141,6 +155,18 @@ session to another workspace. Promotion therefore:
 The scratchpad session stays put; originals remain in the shared scratchpad (copy
 semantics) and can be cleaned with `/scratchpad-tidy`.
 
+## Safety
+
+- **Copy, never move.** Promotion copies the session's file-set out; originals
+  stay in the scratchpad until you run `/scratchpad-tidy --apply`, which itself
+  only lists files that no other live scratchpad session still references.
+- **No tool stripping.** The plugin does not narrow what the agent may do; DSH's
+  own sandbox and approval settings remain in charge.
+- **Nothing is deleted on uninstall.** Removing the plugin removes its routes,
+  commands and listeners; registered workspaces and their files stay put.
+- **No outbound calls of its own.** The host half only talks to the harness
+  (registry, web server, sessions) and the local filesystem.
+
 ## Development
 
 ```bash
@@ -155,6 +181,26 @@ registered through the public slot system - no build step. `npm test` is expecte
 to be green on Linux and macOS, with or without an ambient `DSH_HOME`.
 
 Maintainer-side manual checks live in [docs/manual-verification.md](./docs/manual-verification.md).
+
+Reproducible render check (needs a running instance and Google Chrome):
+
+```bash
+DSH_HOME=~/.dsh node scripts/verify-render.mjs                       # dsh web on :3080
+DSH_HOME="$HOME/Library/Application Support/dsh-desktop/harness" \
+  node scripts/verify-render.mjs --host 127.0.0.1:43129              # DSH Desktop
+```
+
+It navigates headlessly, asserts that the host node is injected directly after
+ the shell's new-session button, that the two share a row with comparable
+widths, and that no slot entry crashed.
+
+| Path | What it is |
+|---|---|
+| `src/` | Host half: config, paths, file-set tracking, promotion |
+| `lib/client.js` | Zero-build browser bundle (no compile step) |
+| `test/` | Unit + integration suites (`npm test`) |
+| `scripts/verify-render.mjs` | Headless render check against a live instance |
+| `docs/` | Maintainer checklist and the screenshot above |
 
 ## Design notes
 
